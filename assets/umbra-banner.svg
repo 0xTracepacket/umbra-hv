@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="440" viewBox="0 0 1440 440" role="img" aria-labelledby="title desc">
+  <title id="title">umbra</title>
+  <desc id="desc">umbra, an experimental Windows x64 hypervisor for Intel VT-x and AMD SVM. Dark background with a violet eclipse.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#111321"/>
+      <stop offset="1" stop-color="#080a10"/>
+    </linearGradient>
+    <radialGradient id="halo">
+      <stop offset="0.48" stop-color="#a993f5" stop-opacity="0"/>
+      <stop offset="0.65" stop-color="#a993f5" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#a993f5" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d5c8ff"/>
+      <stop offset="0.45" stop-color="#9684ce"/>
+      <stop offset="1" stop-color="#39314f"/>
+    </linearGradient>
+    <radialGradient id="disc" cx="0.3" cy="0.2" r="0.9">
+      <stop offset="0" stop-color="#222135"/>
+      <stop offset="0.65" stop-color="#0b0d15"/>
+      <stop offset="1" stop-color="#080a10"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0H0V40" fill="none" stroke="#a49abf" stroke-opacity="0.045"/>
+    </pattern>
+    <clipPath id="cover">
+      <rect width="1440" height="440" rx="12"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#cover)">
+    <rect width="1440" height="440" fill="url(#background)"/>
+    <rect width="1440" height="440" fill="url(#grid)"/>
+    <path d="M64 66H88M64 66V90M1376 66H1352M1376 66V90M64 374H88M64 374V350M1376 374H1352M1376 374V350" fill="none" stroke="#665b82" stroke-width="1"/>
+    <g font-family="'Segoe UI', Arial, sans-serif">
+      <text x="100" y="104" fill="#b7a6e3" font-size="13" font-weight="600" letter-spacing="4">WINDOWS KERNEL DEVELOPMENT</text>
+      <text x="94" y="245" fill="#f0edf8" font-size="132" font-weight="300" letter-spacing="5">umbra</text>
+      <text x="101" y="293" fill="#bcb8cb" font-size="23" font-weight="300" letter-spacing="0.2">Experimental Windows hypervisor</text>
+      <path d="M101 326H669" stroke="#363044"/>
+      <text x="102" y="355" fill="#8f8a9e" font-size="12" letter-spacing="2">WINDOWS x64</text>
+      <circle cx="241" cy="350" r="2" fill="#8c75bd"/>
+      <text x="264" y="355" fill="#8f8a9e" font-size="12" letter-spacing="2">INTEL VT-x / AMD SVM</text>
+      <circle cx="479" cy="350" r="2" fill="#8c75bd"/>
+      <text x="502" y="355" fill="#8f8a9e" font-size="12" letter-spacing="2">C + x64 ASSEMBLY</text>
+    </g>
+    <g transform="translate(1100 220)">
+      <circle r="225" fill="url(#halo)"/>
+      <circle r="174" fill="none" stroke="#8d7cab" stroke-opacity="0.17"/>
+      <circle r="193" fill="none" stroke="#8d7cab" stroke-opacity="0.1" stroke-dasharray="2 9"/>
+      <path d="M-218 0H-152M152 0H218M0-209V-151M0 151V209" stroke="#847499" stroke-opacity="0.4"/>
+      <circle r="132" fill="url(#rim)"/>
+      <circle cx="6" cy="-4" r="129" fill="url(#disc)"/>
+      <path d="M-174-8V8M174-8V8M-8-174H8M-8 174H8" stroke="#b8a5da" stroke-opacity="0.6"/>
+      <circle cx="-123" cy="-123" r="3" fill="#c8b5f4"/>
+      <circle cx="123" cy="123" r="3" fill="#716383"/>
+    </g>
+    <rect x="0.5" y="0.5" width="1439" height="439" rx="11.5" fill="none" stroke="#80708e" stroke-opacity="0.2"/>
+  </g>
+</svg>

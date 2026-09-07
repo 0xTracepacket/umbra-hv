@@ -1,0 +1,15 @@
+build/
+*.obj
+*.pdb
+*.sys
+*.cat
+*.ilk
+*.exp
+*.lib
+ipch/
+.vs/
+*.vcxproj.user
+packages/
+x64/
+Debug/
+Release/
