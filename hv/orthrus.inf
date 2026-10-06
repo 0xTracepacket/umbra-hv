@@ -1,0 +1,50 @@
+;
+; orthrus.inf
+;
+
+[Version]
+Signature   = "$WINDOWS NT$"
+Class       = System
+ClassGuid   = {4D36E97D-E325-11CE-BFC1-08002BE10318}
+Provider    = %ProviderName%
+CatalogFile = orthrus.cat
+DriverVer   = 01/01/2026,1.0.0.0
+PnpLockdown = 1
+
+[DestinationDirs]
+DefaultDestDir = 13
+
+[SourceDisksNames]
+1 = %DiskName%
+
+[SourceDisksFiles]
+orthrus.sys = 1
+
+[Manufacturer]
+%ManufacturerName% = Standard,NTamd64
+
+[Standard.NTamd64]
+%DeviceName% = HypervisorInstall,*PNP0C01
+
+[HypervisorInstall.NT]
+CopyFiles = DriversCopyFiles
+
+[HypervisorInstall.NT.Services]
+AddService = orthrus,0x00000002,HypervisorService
+
+[DriversCopyFiles]
+orthrus.sys,,,0x00000040
+
+[HypervisorService]
+DisplayName    = %ServiceName%
+ServiceType    = 1
+StartType      = 3
+ErrorControl   = 1
+ServiceBinary  = %13%\orthrus.sys
+
+[Strings]
+ProviderName      = "orthrus"
+ManufacturerName  = "orthrus"
+DeviceName        = "orthrus hypervisor"
+ServiceName       = "orthrus"
+DiskName          = "orthrus source"
