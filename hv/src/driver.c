@@ -3,7 +3,11 @@
 #include "vmx.h"
 
 extern NTSTATUS hv_vmcs_setup(struct hv_vcpu* vcpu, u64 eptp);
-extern void     hv_cpu_teardown_ipi(void);
+extern u64     hv_cpu_teardown_ipi(u64 context);
+
+VOID KeGenericCallDpc(_In_ PKDEFERRED_ROUTINE Routine, _In_opt_ PVOID Context);
+VOID KeSignalCallDpcDone(_In_ PKDPC Dpc);
+VOID KeSignalCallDpcSynchronize(_In_ PVOID SynchronizeContext);
 
 static u64 g_eptp;
 static u8  g_hv_active;
@@ -38,7 +42,7 @@ static NTSTATUS hv_bring_up_all_cpus(void)
 
 static void hv_teardown_all_cpus(void)
 {
-    KeIpiGenericCall((IPI_GENERIC_CALLBACK)hv_cpu_teardown_ipi, 0);
+    KeIpiGenericCall(hv_cpu_teardown_ipi, 0);
 }
 
 NTSTATUS hv_init(void)

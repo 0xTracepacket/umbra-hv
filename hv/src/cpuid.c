@@ -72,6 +72,8 @@ static const HV_CPUID_ENTRY* cache_find(u32 leaf, u32 subleaf)
 
 void hv_cpuid_handle(struct hv_vcpu* vcpu, struct hv_regs* regs)
 {
+    UNREFERENCED_PARAMETER(vcpu);
+
     u64 leaf = regs->rax;
     u64 subleaf = regs->rcx;
 

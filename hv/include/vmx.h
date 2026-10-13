@@ -81,6 +81,10 @@
 #define VMCS_GUEST_GDTR_BASE        0x0690
 #define VMCS_GUEST_IDTR_BASE        0x0692
 
+#define VMCS_GUEST_CR0              0x6806
+#define VMCS_GUEST_CR3              0x6808
+#define VMCS_GUEST_CR4              0x680A
+
 #define VMCS_GUEST_DR7              0x6818
 #define VMCS_GUEST_RSP              0x681C
 #define VMCS_GUEST_RIP              0x681E

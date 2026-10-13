@@ -6,6 +6,7 @@ extern void hv_asm_sgdt(u64* buffer);
 extern void hv_asm_sidt(u64* buffer);
 extern void hv_asm_get_segments(u16* selectors);
 extern u64  hv_asm_get_dr7(void);
+extern void hv_asm_exit_stub(void);
 
 static void vmwrite64(u64 field, u64 value)
 {
@@ -217,8 +218,6 @@ NTSTATUS hv_vmcs_setup(struct hv_vcpu* vcpu, u64 eptp)
     vmwrite64(VMCS_HOST_SYSENTER_EIP, __readmsr(IA32_SYSENTER_EIP_MSR));
 
     vmwrite64(VMCS_HOST_RSP, vcpu->host_rsp_top);
-
-    extern void hv_asm_exit_stub(void);
     vmwrite64(VMCS_HOST_RIP, (u64)hv_asm_exit_stub);
 
     vcpu->cr4_shadow = guest_cr4 & ~CR4_VMXE_BIT;

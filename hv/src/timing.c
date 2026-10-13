@@ -27,7 +27,7 @@ void hv_timing_calibrate(void)
     HV_LOG("native cpuid cost: %llu ticks", g_hv_native_cpuid_ticks);
 }
 
-static void hv_arm_rdtsc(struct hv_vcpu* vcpu)
+static void hv_arm_rdtsc(void)
 {
     u64 proc1 = 0;
     __vmx_vmread(VMCS_CTRL_PROC1, &proc1);
@@ -60,7 +60,7 @@ void hv_timing_on_cpuid_exit(struct hv_vcpu* vcpu)
 
     vcpu->tsc_comp_value = comp;
     vcpu->tsc_trap_armed = 1;
-    hv_arm_rdtsc(vcpu);
+    hv_arm_rdtsc();
 }
 
 void hv_timing_on_rdtsc_exit(struct hv_vcpu* vcpu, struct hv_regs* regs)

@@ -101,7 +101,9 @@ void hv_vcpu_teardown(void)
     __writecr4(__readcr4() & ~CR4_VMXE_BIT);
 }
 
-void hv_cpu_teardown_ipi(void)
+u64 hv_cpu_teardown_ipi(u64 context)
 {
+    UNREFERENCED_PARAMETER(context);
     hv_asm_hypercall_teardown();
+    return 0;
 }
