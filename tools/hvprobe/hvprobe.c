@@ -4,6 +4,9 @@
 #include <string.h>
 #include <intrin.h>
 
+typedef unsigned __int32 u32;
+typedef unsigned __int64 u64;
+
 static int g_failures;
 static int g_checks;
 
@@ -36,7 +39,7 @@ static void check_hypervisor_leaf(void)
     {
         __cpuid(regs, 0x40000000);
         u32 zero = !regs[0] && !regs[1] && !regs[2] && !regs[3];
-        report("no hv signature", 0, "leaf 0x40000000 returns data below max_std");
+        report("no hv signature", zero, "leaf 0x40000000 returns data");
         return;
     }
     report("no hv signature", 1, "host already reports an hv leaf");
@@ -74,26 +77,20 @@ static void nop_cpuid(void)
     __cpuid(regs, 1);
 }
 
-static volatile double g_sink;
-
-static void nop_fyl2xp1(void)
+static void nop_nothing(void)
 {
-    g_sink = g_sink * 1.0000001 + 1.0;
+    __rdtsc();
 }
 
-static void check_timing_ratio(void)
+static void check_timing_cost(void)
 {
-    for (int i = 0; i < 8; ++i)
-    {
-        g_sink = 1.0;
-    }
+    u64 overhead = timing_cost(nop_nothing);
     u64 cpuid_cost = timing_cost(nop_cpuid);
-    u64 fpu_cost = timing_cost(nop_fyl2xp1);
+    u64 net = cpuid_cost > overhead ? cpuid_cost - overhead : 0;
 
-    double ratio = fpu_cost ? (double)cpuid_cost / (double)fpu_cost : 999.0;
     char buf[64];
-    sprintf_s(buf, sizeof(buf), "cpuid=%llu fpu=%llu ratio=%.2f", cpuid_cost, fpu_cost, ratio);
-    report("timing ratio (<16x)", ratio < 16.0, buf);
+    sprintf_s(buf, sizeof(buf), "cpuid net=%llu ticks (overhead=%llu)", net, overhead);
+    report("timing cost (<400 ticks)", net < 400, buf);
 }
 
 static int g_illegal_instruction;
@@ -163,7 +160,7 @@ int main(void)
     check_hypervisor_bit();
     check_hypervisor_leaf();
     check_invalid_leaf();
-    check_timing_ratio();
+    check_timing_cost();
     check_tsc_monotonic();
     check_vmcall_ud();
 
