@@ -72,31 +72,13 @@ u64 hv_ept_build(void)
     u64 phys_space_end = 1ull << phys_bits;
     u64 gb_chunks = (phys_space_end + (1ull << 30) - 1) >> 30;
 
-    u8* mixed = ExAllocatePool2(POOL_FLAG_NON_PAGED, (SIZE_T)gb_chunks, HV_TAG);
-    if (!mixed)
-    {
-        return 0;
-    }
-    RtlZeroMemory(mixed, (SIZE_T)gb_chunks);
-
-    u64 pd_pages = 0;
-    for (u64 gb = 0; gb < gb_chunks; ++gb)
-    {
-        if (!hv_is_ram(gb << 30, 1ull << 30))
-        {
-            mixed[gb] = 1;
-            ++pd_pages;
-        }
-    }
-
-    g_ept_buffer_size = (1 + gb_chunks + pd_pages) << 12;
+    g_ept_buffer_size = (1 + gb_chunks + gb_chunks) << 12;
 
     PHYSICAL_ADDRESS low = { 0 };
     PHYSICAL_ADDRESS high = { .QuadPart = 0xFFFFFFFF };
     g_ept_buffer = MmAllocateContiguousMemorySpecifyCache((SIZE_T)g_ept_buffer_size, low, high, low, MmCached);
     if (!g_ept_buffer)
     {
-        ExFreePool(mixed);
         return 0;
     }
     RtlZeroMemory(g_ept_buffer, (SIZE_T)g_ept_buffer_size);
@@ -121,26 +103,18 @@ u64 hv_ept_build(void)
 
         u64* pdpt = (u64*)((u8*)pml4 + (pml4[pml4_index] & ~0xFFFull) - (g_ept_pml4_pa & ~0xFFFull));
 
-        if (!mixed[gb])
-        {
-            pdpt[pdpt_index] = chunk_base | epte(VMX_MEMTYPE_WB);
-        }
-        else
-        {
-            pdpt[pdpt_index] = MmGetPhysicalAddress(free_page).QuadPart | EPTE_READ | EPTE_WRITE | EPTE_EXEC;
-            u64* pd = (u64*)free_page;
-            RtlZeroMemory(free_page, 0x1000);
-            free_page += 0x1000;
+        pdpt[pdpt_index] = MmGetPhysicalAddress(free_page).QuadPart | EPTE_READ | EPTE_WRITE | EPTE_EXEC;
+        u64* pd = (u64*)free_page;
+        RtlZeroMemory(free_page, 0x1000);
+        free_page += 0x1000;
 
-            for (u32 mb = 0; mb < 512; ++mb)
-            {
-                u64 mb_base = chunk_base + ((u64)mb << 21);
-                pd[mb] = mb_base | epte(hv_is_ram(mb_base, 1ull << 21) ? VMX_MEMTYPE_WB : VMX_MEMTYPE_UC);
-            }
+        for (u32 mb = 0; mb < 512; ++mb)
+        {
+            u64 mb_base = chunk_base + ((u64)mb << 21);
+            pd[mb] = mb_base | epte(hv_is_ram(mb_base, 1ull << 21) ? VMX_MEMTYPE_WB : VMX_MEMTYPE_UC);
         }
     }
 
-    ExFreePool(mixed);
     return g_ept_pml4_pa | EPTP_FLAGS;
 }
 

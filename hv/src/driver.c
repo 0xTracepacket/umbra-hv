@@ -70,14 +70,18 @@ NTSTATUS hv_init(void)
     g_eptp = hv_ept_build();
     if (!g_eptp)
     {
+        hv_status_set(0x44);
         hv_vcpu_free();
         return STATUS_INSUFFICIENT_RESOURCES;
     }
 
-    status = hv_bring_up_all_cpus();
+#if HV_STAGE >= 2
+    status = hv_start_vcpu();
+#else
+    status = STATUS_SUCCESS;
+#endif
     if (!NT_SUCCESS(status))
     {
-        hv_teardown_all_cpus();
         hv_ept_destroy();
         hv_vcpu_free();
         return status;
@@ -112,13 +116,23 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT driver, _In_ PUNICODE_STRING registry_p
 {
     UNREFERENCED_PARAMETER(registry_path);
 
+    hv_trace('D');
+    hv_status_init(registry_path);
+
+#if HV_STAGE < 1
+    driver->DriverUnload = hv_driver_unload;
+    return STATUS_SUCCESS;
+#else
     NTSTATUS status = hv_init();
     if (!NT_SUCCESS(status))
     {
         HV_LOG("init failed status=%08lX", status);
+        hv_trace('Z');
         return status;
     }
+#endif
 
+    hv_trace('Y');
     driver->DriverUnload = hv_driver_unload;
     return STATUS_SUCCESS;
 }

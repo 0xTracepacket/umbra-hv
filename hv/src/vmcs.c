@@ -154,6 +154,8 @@ NTSTATUS hv_vmcs_setup(struct hv_vcpu* vcpu, u64 eptp)
     vmwrite64(VMCS_GUEST_CR0, guest_cr0);
     vmwrite64(VMCS_GUEST_CR3, __readcr3());
     vmwrite64(VMCS_GUEST_CR4, guest_cr4);
+    vmwrite64(VMCS_CTRL_CR0_MASK, 0);
+    vmwrite64(VMCS_CTRL_CR4_MASK, CR4_VMXE_BIT);
     vmwrite64(VMCS_CTRL_CR0_SHADOW, guest_cr0);
     vmwrite64(VMCS_CTRL_CR4_SHADOW, guest_cr4 & ~CR4_VMXE_BIT);
 
@@ -184,7 +186,8 @@ NTSTATUS hv_vmcs_setup(struct hv_vcpu* vcpu, u64 eptp)
     vmwrite64(VMCS_GUEST_DR7, hv_asm_get_dr7());
     vmwrite64(VMCS_GUEST_DEBUGCTL, 0);
     vmwrite64(VMCS_GUEST_EFER, __readmsr(IA32_EFER_MSR));
-    vmwrite64(VMCS_LINK_POINTER, ~0ull);
+    vmwrite64(VMCS_GUEST_LINK_POINTER, ~0ull);
+    vmwrite64(VMCS_GUEST_PENDING_DEBUG, 0);
     vmwrite64(VMCS_GUEST_INTERRUPTIBILITY, 0);
     vmwrite64(VMCS_GUEST_ACTIVITY_STATE, 0);
     vmwrite64(VMCS_GUEST_SYSENTER_CS, __readmsr(IA32_SYSENTER_CS_MSR));
@@ -209,6 +212,8 @@ NTSTATUS hv_vmcs_setup(struct hv_vcpu* vcpu, u64 eptp)
     hv_segment_from_gdt(sels[7], &tr_base, &tr_limit, &tr_ar);
 
     vmwrite64(VMCS_HOST_TR_BASE, tr_base);
+    vmwrite64(VMCS_HOST_GDTR_BASE, gdtr[1]);
+    vmwrite64(VMCS_HOST_IDTR_BASE, idtr[1]);
     vmwrite64(VMCS_HOST_FS_BASE, fs_base);
     vmwrite64(VMCS_HOST_GS_BASE, gs_base);
     vmwrite64(VMCS_HOST_EFER, __readmsr(IA32_EFER_MSR));

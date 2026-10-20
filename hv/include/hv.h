@@ -32,8 +32,28 @@ enum hv_hypercall
 NTSTATUS hv_init(void);
 void     hv_shutdown(void);
 
+#ifndef HV_TRACE_ENABLED
+#define HV_TRACE_ENABLED 0
+#endif
+
+#ifndef HV_STAGE
+#define HV_STAGE 2
+#endif
+
+static __inline void hv_trace(char c)
+{
+#if HV_TRACE_ENABLED
+    __outbyte(0x3F8, (u8)c);
+#else
+    UNREFERENCED_PARAMETER(c);
+#endif
+}
+
 NTSTATUS hv_start_vcpu(void);
 void     hv_vcpu_teardown(void);
+
+void hv_status_init(PCUNICODE_STRING registry_path);
+void hv_status_set(u32 value);
 
 extern u64 g_hv_native_cpuid_ticks;
 

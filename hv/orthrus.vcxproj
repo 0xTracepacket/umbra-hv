@@ -54,6 +54,7 @@
     <ClCompile Include="src\exits.c" />
     <ClCompile Include="src\cpuid.c" />
     <ClCompile Include="src\timing.c" />
+    <ClCompile Include="src\status.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\hv.h" />

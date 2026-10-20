@@ -1,8 +1,6 @@
 #include "vcpu.h"
 #include "vmx.h"
 
-static u32 g_unexpected_exit_logged;
-
 static void vmwrite64(u64 field, u64 value)
 {
     __vmx_vmwrite(field, value);
@@ -130,14 +128,21 @@ static BOOLEAN hv_dispatch(struct hv_vcpu* vcpu, struct hv_regs* regs, u64 reaso
         return TRUE;
     }
 
+    case EXIT_EPT_VIOLATION:
+    case EXIT_EPT_MISCONFIG:
+    {
+        u64 qual = vmread64(VMCS_EXIT_QUALIFICATION);
+        u64 gpa = vmread64(0x2400);
+        u64 rip = vmread64(VMCS_GUEST_RIP);
+        KeBugCheckEx(0xC0DE0001, reason, qual, gpa, rip);
+    }
+
     default:
-        if (reason != EXIT_EXCEPTION_NMI && reason != EXIT_EXTERNAL_INTERRUPT
-            && g_unexpected_exit_logged < 16)
-        {
-            ++g_unexpected_exit_logged;
-            HV_LOG("unexpected exit reason=%llu", reason);
-        }
-        return TRUE;
+    {
+        u64 qual = vmread64(VMCS_EXIT_QUALIFICATION);
+        u64 rip = vmread64(VMCS_GUEST_RIP);
+        KeBugCheckEx(0xC0DE0002, reason, qual, rip, vcpu->exit_count);
+    }
     }
 }
 
@@ -147,6 +152,11 @@ u8 hv_exit_handler(struct hv_regs* regs)
     if (!vcpu)
     {
         __debugbreak();
+    }
+
+    if (vcpu->exit_count < 32)
+    {
+        hv_trace('e');
     }
 
     ++vcpu->exit_count;
