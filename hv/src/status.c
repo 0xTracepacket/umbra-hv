@@ -1,6 +1,7 @@
 #include "hv.h"
 
 static HANDLE g_status_key;
+static volatile LONG g_status_pending = -1;
 
 #define HV_STATUS_KEY L"\\Registry\\Machine\\System\\CurrentControlSet\\Services\\orthrus"
 
@@ -28,6 +29,14 @@ void hv_status_init(PCUNICODE_STRING registry_path)
     }
 }
 
+static void hv_status_commit(u32 value)
+{
+    UNICODE_STRING name;
+    RtlInitUnicodeString(&name, L"Status");
+    ZwSetValueKey(g_status_key, &name, 0, REG_DWORD, &value, sizeof(value));
+    ZwFlushKey(g_status_key);
+}
+
 void hv_status_set(u32 value)
 {
     if (!g_status_key)
@@ -35,7 +44,25 @@ void hv_status_set(u32 value)
         return;
     }
 
-    UNICODE_STRING name;
-    RtlInitUnicodeString(&name, L"Status");
-    ZwSetValueKey(g_status_key, &name, 0, REG_DWORD, &value, sizeof(value));
+    if (KeGetCurrentIrql() > PASSIVE_LEVEL)
+    {
+        InterlockedExchange(&g_status_pending, (LONG)value);
+        return;
+    }
+
+    hv_status_commit(value);
+}
+
+void hv_status_flush(void)
+{
+    if (!g_status_key)
+    {
+        return;
+    }
+
+    LONG pending = InterlockedExchange(&g_status_pending, -1);
+    if (pending >= 0)
+    {
+        hv_status_commit((u32)pending);
+    }
 }

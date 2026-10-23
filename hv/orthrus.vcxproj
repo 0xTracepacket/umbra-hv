@@ -55,15 +55,19 @@
     <ClCompile Include="src\cpuid.c" />
     <ClCompile Include="src\timing.c" />
     <ClCompile Include="src\status.c" />
+    <ClCompile Include="src\npt.c" />
+    <ClCompile Include="src\svm.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\hv.h" />
     <ClInclude Include="include\vmx.h" />
     <ClInclude Include="include\vcpu.h" />
     <ClInclude Include="include\ept.h" />
+    <ClInclude Include="include\svm.h" />
   </ItemGroup>
   <ItemGroup>
     <MASM Include="asm\hv.asm" />
+    <MASM Include="asm\svm_entry.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

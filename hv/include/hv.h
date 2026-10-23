@@ -54,6 +54,7 @@ void     hv_vcpu_teardown(void);
 
 void hv_status_init(PCUNICODE_STRING registry_path);
 void hv_status_set(u32 value);
+void hv_status_flush(void);
 
 extern u64 g_hv_native_cpuid_ticks;
 

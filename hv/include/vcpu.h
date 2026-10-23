@@ -40,6 +40,16 @@ struct hv_vcpu
     u64   last_guest_tsc;
     u64   exit_count;
     u8    teardown;
+    u8*   svm_vmcb_va;
+    u64   svm_vmcb_pa;
+    u8*   svm_host_vmcb_va;
+    u64   svm_host_vmcb_pa;
+    u8*   svm_hsave_va;
+    u64   svm_hsave_pa;
+    u8*   svm_msrpm_va;
+    u64   svm_msrpm_pa;
+    u64   svm_guest_efer;
+    u32   svm_asid;
 };
 
 extern struct hv_vcpu* g_hv_vcpus;

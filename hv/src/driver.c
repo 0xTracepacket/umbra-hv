@@ -1,6 +1,7 @@
 #include "vcpu.h"
 #include "ept.h"
 #include "vmx.h"
+#include "svm.h"
 
 extern NTSTATUS hv_vmcs_setup(struct hv_vcpu* vcpu, u64 eptp);
 extern u64     hv_cpu_teardown_ipi(u64 context);
@@ -11,6 +12,20 @@ VOID KeSignalCallDpcSynchronize(_In_ PVOID SynchronizeContext);
 
 static u64 g_eptp;
 static u8  g_hv_active;
+static u8  g_is_amd;
+
+static BOOLEAN hv_vendor_is_amd(void)
+{
+    int regs[4] = { 0 };
+    char vendor[13] = { 0 };
+
+    __cpuid(regs, 0);
+    *(u32*)(vendor + 0) = (u32)regs[1];
+    *(u32*)(vendor + 4) = (u32)regs[3];
+    *(u32*)(vendor + 8) = (u32)regs[2];
+
+    return RtlCompareMemory(vendor, "AuthenticAMD", 12) == 12;
+}
 
 static VOID hv_start_dpc(
     _In_ PKDPC dpc,
@@ -50,6 +65,12 @@ NTSTATUS hv_init(void)
     if (g_hv_active)
     {
         return STATUS_ALREADY_INITIALIZED;
+    }
+
+    g_is_amd = hv_vendor_is_amd();
+    if (g_is_amd)
+    {
+        return hv_svm_init();
     }
 
     u32 cpu_count = KeQueryActiveProcessorCountEx(ALL_PROCESSOR_GROUPS);
@@ -94,6 +115,12 @@ NTSTATUS hv_init(void)
 
 void hv_shutdown(void)
 {
+    if (g_is_amd)
+    {
+        hv_svm_shutdown();
+        return;
+    }
+
     if (!g_hv_active)
     {
         return;
