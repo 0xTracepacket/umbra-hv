@@ -46,7 +46,6 @@ NTSTATUS hv_start_vcpu(void)
         return STATUS_UNSUCCESSFUL;
     }
 
-    hv_trace('1');
 
     int regs[4] = { 0 };
     __cpuid(regs, 1);
@@ -78,13 +77,11 @@ NTSTATUS hv_start_vcpu(void)
     if (__vmx_on(&vmxon_pa))
     {
         HV_LOG("vmxon failed on cpu %u", KeGetCurrentProcessorNumberEx(NULL));
-        hv_trace('V');
         hv_status_set(0x22);
         __writecr4(__readcr4() & ~CR4_VMXE_BIT);
         return STATUS_UNSUCCESSFUL;
     }
 
-    hv_trace('W');
 
 #if HV_STAGE < 4
     __vmx_off();
@@ -94,14 +91,12 @@ NTSTATUS hv_start_vcpu(void)
     NTSTATUS status = hv_vmcs_setup(vcpu, hv_ept_pointer());
     if (!NT_SUCCESS(status))
     {
-        hv_trace('C');
         hv_status_set(0x33);
         __vmx_off();
         __writecr4(__readcr4() & ~CR4_VMXE_BIT);
         return status;
     }
 
-    hv_trace('K');
 #endif
 
 #if HV_STAGE < 5
@@ -115,13 +110,11 @@ NTSTATUS hv_start_vcpu(void)
         u64 error = 0;
         __vmx_vmread(VMCS_VM_INSTR_ERROR, &error);
         HV_LOG("vmlaunch failed on cpu %u error=%llu", KeGetCurrentProcessorNumberEx(NULL), error);
-        hv_trace('F');
         __vmx_off();
         __writecr4(__readcr4() & ~CR4_VMXE_BIT);
         return STATUS_UNSUCCESSFUL;
     }
 
-    hv_trace('G');
     hv_status_set(0x99);
     return STATUS_SUCCESS;
 #endif

@@ -156,7 +156,6 @@ u8 hv_exit_handler(struct hv_regs* regs)
 
     if (vcpu->exit_count < 32)
     {
-        hv_trace('e');
     }
 
     ++vcpu->exit_count;

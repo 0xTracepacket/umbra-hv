@@ -143,7 +143,6 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT driver, _In_ PUNICODE_STRING registry_p
 {
     UNREFERENCED_PARAMETER(registry_path);
 
-    hv_trace('D');
     hv_status_init(registry_path);
 
 #if HV_STAGE < 1
@@ -154,12 +153,10 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT driver, _In_ PUNICODE_STRING registry_p
     if (!NT_SUCCESS(status))
     {
         HV_LOG("init failed status=%08lX", status);
-        hv_trace('Z');
         return status;
     }
 #endif
 
-    hv_trace('Y');
     driver->DriverUnload = hv_driver_unload;
     return STATUS_SUCCESS;
 }

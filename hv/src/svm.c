@@ -197,20 +197,21 @@ NTSTATUS hv_svm_start_vcpu(void)
         return STATUS_NOT_SUPPORTED;
     }
 
-    hv_status_set(0x220);
-
     __writemsr(SVM_VM_HSAVE_PA_MSR, vcpu->svm_hsave_pa);
+
 #if HV_SVM_STAGE < 2
     hv_status_set(0x87);
     return STATUS_SUCCESS;
-#else
+#endif
+
     __writemsr(SVM_EFER_MSR, __readmsr(SVM_EFER_MSR) | SVM_EFER_SVME);
 
 #if HV_SVM_STAGE < 3
     __writemsr(SVM_EFER_MSR, __readmsr(SVM_EFER_MSR) & ~SVM_EFER_SVME);
     hv_status_set(0x88);
     return STATUS_SUCCESS;
-#else
+#endif
+
     hv_status_set(0x230);
 
     hv_svm_setup_vmcb(vcpu);
@@ -220,11 +221,7 @@ NTSTATUS hv_svm_start_vcpu(void)
 
     hv_status_set(0x99);
     return STATUS_SUCCESS;
-#endif
-#endif
 }
-
-static void hv_svm_teardown_all_cpus(void);
 
 static VOID hv_svm_start_dpc(
     _In_ PKDPC dpc,
