@@ -1,7 +1,7 @@
 PUBLIC hv_asm_exit_stub
 PUBLIC hv_asm_vmx_launch
 PUBLIC hv_asm_guest_entry
-PUBLIC hv_asm_hypercall_teardown
+PUBLIC hv_asm_teardown_call
 PUBLIC hv_asm_sgdt
 PUBLIC hv_asm_sidt
 PUBLIC hv_asm_get_segments
@@ -98,14 +98,14 @@ hv_asm_guest_entry PROC
     ret
 hv_asm_guest_entry ENDP
 
-hv_asm_hypercall_teardown PROC
+hv_asm_teardown_call PROC
     mov  r10, HV_SIG0
     mov  r11, HV_SIG1
     mov  r12, HV_SIG2
     mov  rax, 1
     vmcall
     ret
-hv_asm_hypercall_teardown ENDP
+hv_asm_teardown_call ENDP
 
 hv_asm_sgdt PROC
     sgdt fword ptr [rcx]

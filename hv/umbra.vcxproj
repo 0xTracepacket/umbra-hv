@@ -13,8 +13,8 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7a1c9e44-2d0b-4f61-9b3e-8c2d5a9f0e21}</ProjectGuid>
     <TemplateGuid>{8c0e3d9a-1f2b-4c5a-9e6d-7f8a0b1c2d3e}</TemplateGuid>
-    <RootNamespace>orthrus</RootNamespace>
-    <ProjectName>orthrus</ProjectName>
+    <RootNamespace>umbra</RootNamespace>
+    <ProjectName>umbra</ProjectName>
     <ConfigurationType>Driver</ConfigurationType>
     <DriverType>WDM</DriverType>
     <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
@@ -53,7 +53,7 @@
     <ClCompile Include="src\ept.c" />
     <ClCompile Include="src\exits.c" />
     <ClCompile Include="src\cpuid.c" />
-    <ClCompile Include="src\timing.c" />
+    <ClCompile Include="src\tsc.c" />
     <ClCompile Include="src\status.c" />
     <ClCompile Include="src\npt.c" />
     <ClCompile Include="src\svm.c" />

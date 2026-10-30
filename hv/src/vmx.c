@@ -3,7 +3,7 @@
 #include "vmx.h"
 
 extern u8   hv_asm_vmx_launch(void);
-extern void hv_asm_hypercall_teardown(void);
+extern void hv_asm_teardown_call(void);
 extern NTSTATUS hv_vmcs_setup(struct hv_vcpu* vcpu, u64 eptp);
 
 static BOOLEAN hv_vmx_available(void)
@@ -134,9 +134,9 @@ void hv_vcpu_teardown(void)
     __writecr4(__readcr4() & ~CR4_VMXE_BIT);
 }
 
-u64 hv_cpu_teardown_ipi(u64 context)
+u64 hv_vmx_teardown_ipi(u64 context)
 {
     UNREFERENCED_PARAMETER(context);
-    hv_asm_hypercall_teardown();
+    hv_asm_teardown_call();
     return 0;
 }

@@ -4,7 +4,7 @@
 #include "svm.h"
 
 extern NTSTATUS hv_vmcs_setup(struct hv_vcpu* vcpu, u64 eptp);
-extern u64     hv_cpu_teardown_ipi(u64 context);
+extern u64     hv_vmx_teardown_ipi(u64 context);
 
 VOID KeGenericCallDpc(_In_ PKDEFERRED_ROUTINE Routine, _In_opt_ PVOID Context);
 VOID KeSignalCallDpcDone(_In_ PKDPC Dpc);
@@ -57,7 +57,7 @@ static NTSTATUS hv_bring_up_all_cpus(void)
 
 static void hv_teardown_all_cpus(void)
 {
-    KeIpiGenericCall(hv_cpu_teardown_ipi, 0);
+    KeIpiGenericCall(hv_vmx_teardown_ipi, 0);
 }
 
 NTSTATUS hv_init(void)
@@ -80,7 +80,7 @@ NTSTATUS hv_init(void)
     }
 
     hv_cpuid_cache_capture();
-    hv_timing_calibrate();
+    hv_tsc_calibrate();
 
     NTSTATUS status = hv_vcpu_alloc(cpu_count);
     if (!NT_SUCCESS(status))

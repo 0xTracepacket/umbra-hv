@@ -3,7 +3,7 @@
 #include <ntddk.h>
 #include <intrin.h>
 
-#define HV_TAG 'vrth'
+#define HV_TAG 'umbr'
 #define HV_MAX_VCPU 64
 
 #define HV_LOG(msg, ...) DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "[hv] " msg "\n", __VA_ARGS__)
@@ -43,12 +43,12 @@ void hv_status_init(PCUNICODE_STRING registry_path);
 void hv_status_set(u32 value);
 void hv_status_flush(void);
 
-extern u64 g_hv_native_cpuid_ticks;
+extern u64 g_hv_cpuid_ticks;
 
 void hv_cpuid_cache_capture(void);
 void hv_cpuid_handle(struct hv_vcpu* vcpu, struct hv_regs* regs);
 
-void hv_timing_calibrate(void);
-void hv_timing_on_cpuid_exit(struct hv_vcpu* vcpu);
-void hv_timing_on_rdtsc_exit(struct hv_vcpu* vcpu, struct hv_regs* regs);
-void hv_timing_disarm(struct hv_vcpu* vcpu);
+void hv_tsc_calibrate(void);
+void hv_tsc_arm(struct hv_vcpu* vcpu);
+void hv_tsc_compensate(struct hv_vcpu* vcpu, struct hv_regs* regs);
+void hv_tsc_disarm(struct hv_vcpu* vcpu);

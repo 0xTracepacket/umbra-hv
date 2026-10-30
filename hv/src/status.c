@@ -3,8 +3,6 @@
 static HANDLE g_status_key;
 static volatile LONG g_status_pending = -1;
 
-#define HV_STATUS_KEY L"\\Registry\\Machine\\System\\CurrentControlSet\\Services\\orthrus"
-
 void hv_status_init(PCUNICODE_STRING registry_path)
 {
     OBJECT_ATTRIBUTES attrs;

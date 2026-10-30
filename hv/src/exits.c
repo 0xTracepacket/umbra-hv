@@ -82,13 +82,13 @@ static BOOLEAN hv_dispatch(struct hv_vcpu* vcpu, struct hv_regs* regs, u64 reaso
     case EXIT_CPUID:
         hv_cpuid_handle(vcpu, regs);
         hv_advance_rip();
-        hv_timing_on_cpuid_exit(vcpu);
+        hv_tsc_arm(vcpu);
         return TRUE;
 
     case EXIT_RDTSC:
         if (vcpu->tsc_trap_armed)
         {
-            hv_timing_on_rdtsc_exit(vcpu, regs);
+            hv_tsc_compensate(vcpu, regs);
         }
         else
         {
@@ -164,7 +164,7 @@ u8 hv_exit_handler(struct hv_regs* regs)
 
     if (vcpu->tsc_trap_armed && reason != EXIT_RDTSC && reason != EXIT_CPUID)
     {
-        hv_timing_disarm(vcpu);
+        hv_tsc_disarm(vcpu);
     }
 
     vmwrite64(VMCS_CTRL_ENTRY_INT_INFO, 0);

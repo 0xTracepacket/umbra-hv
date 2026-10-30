@@ -1,5 +1,5 @@
 ;
-; orthrus.inf
+; umbra.inf
 ;
 
 [Version]
@@ -7,7 +7,7 @@ Signature   = "$WINDOWS NT$"
 Class       = System
 ClassGuid   = {4D36E97D-E325-11CE-BFC1-08002BE10318}
 Provider    = %ProviderName%
-CatalogFile = orthrus.cat
+CatalogFile = umbra.cat
 DriverVer   = 01/01/2026,1.0.0.0
 PnpLockdown = 1
 
@@ -18,7 +18,7 @@ DefaultDestDir = 13
 1 = %DiskName%
 
 [SourceDisksFiles]
-orthrus.sys = 1
+umbra.sys = 1
 
 [Manufacturer]
 %ManufacturerName% = Standard,NTamd64
@@ -30,21 +30,21 @@ orthrus.sys = 1
 CopyFiles = DriversCopyFiles
 
 [HypervisorInstall.NT.Services]
-AddService = orthrus,0x00000002,HypervisorService
+AddService = umbra,0x00000002,HypervisorService
 
 [DriversCopyFiles]
-orthrus.sys,,,0x00000040
+umbra.sys,,,0x00000040
 
 [HypervisorService]
 DisplayName    = %ServiceName%
 ServiceType    = 1
 StartType      = 3
 ErrorControl   = 1
-ServiceBinary  = %13%\orthrus.sys
+ServiceBinary  = %13%\umbra.sys
 
 [Strings]
-ProviderName      = "orthrus"
-ManufacturerName  = "orthrus"
-DeviceName        = "orthrus hypervisor"
-ServiceName       = "orthrus"
-DiskName          = "orthrus source"
+ProviderName      = "umbra"
+ManufacturerName  = "umbra"
+DeviceName        = "umbra hypervisor"
+ServiceName       = "umbra"
+DiskName          = "umbra source"
